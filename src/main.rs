@@ -1,11 +1,62 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, vec};
 
 fn main() {
-    let res = TwoSum::two_sum_v2(vec![3, 2, 3], 6);
+    let res = GroupAnagrams::group_anagrams(vec![
+        "eat".into(),
+        "tea".into(),
+        "tan".into(),
+        "ate".into(),
+        "nat".into(),
+        "bat".into(),
+    ]);
     println!("{:?}", res)
 }
 
-//https://leetcode.cn/problems/two-sum/description/?envType=study-plan-v2&envId=top-100-liked
+// https://leetcode.cn/problems/group-anagrams/description/
+struct GroupAnagrams;
+
+impl GroupAnagrams {
+    pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+        let mut hashmap = HashMap::<String, Vec<String>>::new();
+
+        for word in strs {
+            let mut chars: Vec<String> = word.chars().collect();
+            chars.sort();
+
+            let sorted_word = chars.join("");
+
+            match hashmap.get_mut(&sorted_word) {
+                Some(set) => {
+                    set.push(word);
+                }
+                None => {
+                    hashmap.insert(sorted_word, vec![word]);
+                }
+            }
+        }
+
+        hashmap.into_values().collect::<Vec<Vec<String>>>()
+    }
+
+    pub fn group_anagrams_v2(strs: Vec<String>) -> Vec<Vec<String>> {
+        let mut hashmap: HashMap<Vec<i32>, Vec<String>> = HashMap::new();
+
+        for word in strs {
+            let mut count = vec![0; 26]; // Assuming lowercase a-z
+            for c in word.chars() {
+                count[c as usize - 'a' as usize] += 1;
+            }
+
+            hashmap.entry(count).or_insert_with(Vec::new).push(word);
+        }
+
+        hashmap.into_values().collect()
+    }
+}
+
+impl GroupAnagrams {}
+
+// https://leetcode.cn/problems/two-sum/description/
 struct TwoSum;
 
 impl TwoSum {
