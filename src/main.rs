@@ -1,15 +1,57 @@
 use std::{collections::HashMap, vec};
 
 fn main() {
-    let res = GroupAnagrams::group_anagrams(vec![
-        "eat".into(),
-        "tea".into(),
-        "tan".into(),
-        "ate".into(),
-        "nat".into(),
-        "bat".into(),
-    ]);
-    println!("{:?}", res)
+    let mut nums = vec![1, 2, 0, 1];
+    let res = MoveZones::move_zeroes(&mut nums);
+    print!("{:?}", nums)
+}
+
+struct MoveZones;
+
+impl MoveZones {
+    pub fn move_zeroes(nums: &mut Vec<i32>) {
+        let orignal_len = nums.len();
+
+        nums.retain(|&num| num != 0);
+        let new_len = nums.len();
+
+        let zeros = vec![0; orignal_len - new_len];
+
+        nums.extend(zeros.iter());
+    }
+}
+
+struct LongestConsecutiveSequence;
+
+impl LongestConsecutiveSequence {
+    pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
+        if nums.len() == 0 {
+            return 0;
+        }
+
+        let mut mutable_nums = Vec::with_capacity(nums.len());
+        mutable_nums.extend_from_slice(&nums);
+
+        mutable_nums.dedup();
+
+        mutable_nums.sort();
+
+        let mut consecutive_counts = vec![1; nums.len()];
+        let mut index = 0;
+
+        mutable_nums.iter().reduce(|acc, cur| {
+            if cur - acc == 1 {
+                consecutive_counts[index] += 1;
+            } else if cur == acc {
+                //do nothing
+            } else {
+                index += 1;
+            }
+            cur
+        });
+
+        consecutive_counts.into_iter().max().unwrap()
+    }
 }
 
 // https://leetcode.cn/problems/group-anagrams/description/
@@ -20,7 +62,7 @@ impl GroupAnagrams {
         let mut hashmap = HashMap::<String, Vec<String>>::new();
 
         for word in strs {
-            let mut chars: Vec<String> = word.chars().collect();
+            let mut chars: Vec<&str> = word.split("").collect();
             chars.sort();
 
             let sorted_word = chars.join("");
