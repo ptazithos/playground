@@ -1,9 +1,53 @@
-use std::{collections::HashMap, vec};
+use std::{cmp::min, collections::HashMap, vec};
 
 fn main() {
-    let mut nums = vec![1, 2, 0, 1];
-    let res = MoveZones::move_zeroes(&mut nums);
-    print!("{:?}", nums)
+    let nums = vec![4, 3, 2, 1, 4];
+    let res = ContainerWithMostWater::max_area(nums);
+    print!("{:?}", res)
+}
+
+struct ContainerWithMostWater;
+
+impl ContainerWithMostWater {
+    pub fn max_area(height: Vec<i32>) -> i32 {
+        let mut max_capacity = 0;
+        for (lindex, lh) in height.iter().enumerate() {
+            if lindex + 1 == height.len() {
+                continue;
+            }
+            for (rindex, rh) in height[(lindex + 1)..].iter().enumerate() {
+                let capacity = min(lh, rh) * (rindex as i32 + 1);
+                if capacity > max_capacity {
+                    max_capacity = capacity
+                }
+            }
+        }
+
+        max_capacity
+    }
+
+    pub fn max_area_v2(height: Vec<i32>) -> i32 {
+        let (mut lp, mut rp) = (0, height.len() - 1);
+
+        let mut max_capacity = 0;
+        while (lp != rp) {
+            let lh = height[lp];
+            let rh = height[rp];
+
+            let capacity = min(lh, rh) * ((rp - lp) as i32);
+            if capacity > max_capacity {
+                max_capacity = capacity;
+            }
+
+            if lh > rh {
+                rp -= 1;
+            } else {
+                lp += 1;
+            }
+        }
+
+        max_capacity
+    }
 }
 
 struct MoveZones;
