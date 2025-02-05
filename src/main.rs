@@ -1,9 +1,55 @@
 use std::{cmp::min, collections::HashMap, vec};
 
 fn main() {
-    let nums = vec![4, 3, 2, 1, 4];
-    let res = ContainerWithMostWater::max_area(nums);
+    let nums = vec![-2, 0, 1, 1, 2];
+    let res = ThreeSum::three_sum(nums);
     print!("{:?}", res)
+}
+
+struct ThreeSum;
+
+impl ThreeSum {
+    pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut owned_nums = nums;
+        owned_nums.sort();
+
+        let mut res = vec![];
+
+        if owned_nums.len() < 3 {
+            return res;
+        }
+
+        for n in 0..(owned_nums.len() - 2) {
+            let mval = owned_nums[n];
+
+            if mval > 0 {
+                res.sort();
+                res.dedup();
+                return res;
+            }
+
+            let mut rp = n + 1;
+            let mut lp = owned_nums.len() - 1;
+
+            while rp != lp {
+                let rval = owned_nums[rp];
+                let lval = owned_nums[lp];
+
+                let sum = rval + lval;
+                if sum < -mval {
+                    rp += 1;
+                } else if sum > -mval {
+                    lp -= 1;
+                } else {
+                    res.push(vec![mval, rval, lval]);
+                    lp -= 1;
+                }
+            }
+        }
+        res.sort();
+        res.dedup();
+        res
+    }
 }
 
 struct ContainerWithMostWater;
