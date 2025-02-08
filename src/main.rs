@@ -1,9 +1,58 @@
-use std::{cmp::min, collections::HashMap, vec};
+use std::{
+    cmp::{max, min},
+    collections::HashMap,
+    vec,
+};
 
 fn main() {
-    let nums = vec![-2, 0, 1, 1, 2];
-    let res = ThreeSum::three_sum(nums);
+    let nums = vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
+    let res = TrappingRainWater::trap(nums);
     print!("{:?}", res)
+}
+
+struct TrappingRainWater;
+
+impl TrappingRainWater {
+    pub fn trap(height: Vec<i32>) -> i32 {
+        let mut max_left = 0;
+        let mut max_lefts = height
+            .iter()
+            .map(|h| {
+                if *h > max_left {
+                    max_left = *h;
+                }
+                return max_left;
+            })
+            .collect::<Vec<i32>>();
+
+        max_lefts.insert(0, 0);
+        max_lefts.pop();
+
+        let mut max_right = 0;
+        let mut max_rights = height
+            .iter()
+            .rev()
+            .map(|h| {
+                if *h > max_right {
+                    max_right = *h
+                }
+
+                max_right
+            })
+            .collect::<Vec<i32>>();
+
+        max_rights.insert(0, 0);
+        max_rights.pop();
+        max_rights.reverse();
+
+        let mut capacity = 0;
+
+        for (index, h) in height.iter().enumerate() {
+            capacity += max(min(max_lefts[index], max_rights[index]) - *h, 0);
+        }
+
+        capacity
+    }
 }
 
 struct ThreeSum;
