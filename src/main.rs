@@ -6,10 +6,42 @@ use std::{
 
 fn main() {
     let nums = vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-    let res = Solution::length_of_longest_substring(String::from("asff"));
+    let res = Solution::find_anagrams(String::from("cbaebabacd"), String::from("ab"));
     print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn find_anagrams(s: String, p: String) -> Vec<i32> {
+        if p.len() > s.len() {
+            return vec![];
+        }
+
+        let ascii_base = 'a' as usize;
+        let mut p_chars = [0; 26];
+        for c in p.chars() {
+            let ascii_code = c.to_ascii_lowercase() as usize;
+            let pos = ascii_code - ascii_base;
+
+            p_chars[pos] += 1;
+        }
+
+        let mut res = vec![];
+        for i in 0..(s.len() - p.len() + 1) {
+            let mut s_chars = [0; 26];
+            for c in s[i..i + p.len()].chars() {
+                let ascii_code = c.to_ascii_lowercase() as usize;
+                let pos = ascii_code - ascii_base;
+                s_chars[pos] += 1;
+            }
+            if p_chars == s_chars {
+                res.push(i as i32);
+            }
+        }
+
+        res
+    }
+}
 
 impl Solution {
     pub fn length_of_longest_substring(s: String) -> i32 {
