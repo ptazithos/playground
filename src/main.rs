@@ -6,10 +6,43 @@ use std::{
 
 fn main() {
     let nums = vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-    let res = TrappingRainWater::trap(nums);
+    let res =
+        LongestSubstringWithoutRepeatingChars::length_of_longest_substring(String::from("asff"));
     print!("{:?}", res)
 }
+struct LongestSubstringWithoutRepeatingChars {}
 
+impl LongestSubstringWithoutRepeatingChars {
+    pub fn length_of_longest_substring(s: String) -> i32 {
+        let chars: Vec<char> = s.chars().collect();
+
+        if chars.len() == 0 {
+            return 0;
+        }
+
+        let mut lp = 0;
+        let mut rp = 1;
+
+        let mut candidate = String::from(&s[lp..rp]);
+        let mut res = candidate.len();
+
+        while rp != s.len() {
+            let new_char = chars[rp];
+            if candidate.contains(new_char) {
+                lp += 1;
+                rp = max(lp + 1, rp);
+            } else {
+                rp += 1;
+            }
+            candidate = String::from(&s[lp..rp]);
+            if candidate.len() > res {
+                res = candidate.len();
+            }
+        }
+
+        res as i32
+    }
+}
 struct TrappingRainWater;
 
 impl TrappingRainWater {
