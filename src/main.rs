@@ -6,13 +6,12 @@ use std::{
 
 fn main() {
     let nums = vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-    let res =
-        LongestSubstringWithoutRepeatingChars::length_of_longest_substring(String::from("asff"));
+    let res = Solution::length_of_longest_substring(String::from("asff"));
     print!("{:?}", res)
 }
-struct LongestSubstringWithoutRepeatingChars {}
+struct Solution {}
 
-impl LongestSubstringWithoutRepeatingChars {
+impl Solution {
     pub fn length_of_longest_substring(s: String) -> i32 {
         let chars: Vec<char> = s.chars().collect();
 
@@ -43,9 +42,8 @@ impl LongestSubstringWithoutRepeatingChars {
         res as i32
     }
 }
-struct TrappingRainWater;
 
-impl TrappingRainWater {
+impl Solution {
     pub fn trap(height: Vec<i32>) -> i32 {
         let mut max_left = 0;
         let mut max_lefts = height
@@ -88,9 +86,7 @@ impl TrappingRainWater {
     }
 }
 
-struct ThreeSum;
-
-impl ThreeSum {
+impl Solution {
     pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
         let mut owned_nums = nums;
         owned_nums.sort();
@@ -134,9 +130,7 @@ impl ThreeSum {
     }
 }
 
-struct ContainerWithMostWater;
-
-impl ContainerWithMostWater {
+impl Solution {
     pub fn max_area(height: Vec<i32>) -> i32 {
         let mut max_capacity = 0;
         for (lindex, lh) in height.iter().enumerate() {
@@ -178,9 +172,7 @@ impl ContainerWithMostWater {
     }
 }
 
-struct MoveZones;
-
-impl MoveZones {
+impl Solution {
     pub fn move_zeroes(nums: &mut Vec<i32>) {
         let orignal_len = nums.len();
 
@@ -193,9 +185,7 @@ impl MoveZones {
     }
 }
 
-struct LongestConsecutiveSequence;
-
-impl LongestConsecutiveSequence {
+impl Solution {
     pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
         if nums.len() == 0 {
             return 0;
@@ -227,9 +217,8 @@ impl LongestConsecutiveSequence {
 }
 
 // https://leetcode.cn/problems/group-anagrams/description/
-struct GroupAnagrams;
 
-impl GroupAnagrams {
+impl Solution {
     pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
         let mut hashmap = HashMap::<String, Vec<String>>::new();
 
@@ -268,12 +257,9 @@ impl GroupAnagrams {
     }
 }
 
-impl GroupAnagrams {}
-
 // https://leetcode.cn/problems/two-sum/description/
-struct TwoSum;
 
-impl TwoSum {
+impl Solution {
     pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
         let nums_with_index: Vec<(usize, i32)> = nums.into_iter().enumerate().collect();
 
