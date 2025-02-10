@@ -5,11 +5,41 @@ use std::{
 };
 
 fn main() {
-    let nums = vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-    let res = Solution::find_anagrams(String::from("cbaebabacd"), String::from("ab"));
+    let res = Solution::subarray_sum(vec![-1, -1, 1], 0);
     print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn subarray_sum(nums: Vec<i32>, k: i32) -> i32 {
+        let mut presum_map: HashMap<i32, i32> = HashMap::new();
+        let mut res = 0;
+
+        nums.into_iter()
+            .enumerate()
+            .fold(0, |presum, (index, num)| {
+                let presum = num + presum;
+
+                if presum == k {
+                    res += 1;
+                }
+
+                if presum_map.contains_key(&(presum - k)) {
+                    let count = presum_map.get(&(presum - k)).unwrap();
+                    res += *count;
+                }
+
+                presum_map
+                    .entry(presum)
+                    .and_modify(|num| *num += 1)
+                    .or_insert(1);
+
+                presum
+            });
+
+        res
+    }
+}
 
 impl Solution {
     pub fn find_anagrams(s: String, p: String) -> Vec<i32> {
