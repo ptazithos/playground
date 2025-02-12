@@ -5,10 +5,81 @@ use std::{
 };
 
 fn main() {
-    let res = Solution::max_sliding_window(vec![1, -1], 1);
+    let res = Solution::min_window(String::from("acbbaca"), String::from("aba"));
     print!("{:?}", res)
 }
 struct Solution {}
+impl Solution {
+    fn get_char_map(s: &String) -> HashMap<char, u32> {
+        let mut char_map: HashMap<char, u32> = HashMap::new();
+
+        for c in s.chars() {
+            *char_map.entry(c).or_insert(0) += 1;
+        }
+
+        char_map
+    }
+
+    fn is_char_map_contains(lm: &HashMap<char, u32>, rm: &HashMap<char, u32>) -> bool {
+        for (c, count) in rm {
+            if lm.get(&c).unwrap_or(&0) < &count {
+                return false;
+            }
+        }
+
+        true
+    }
+
+    pub fn min_window(s: String, t: String) -> String {
+        if s.len() == 0 || t.len() == 0 || t.len() > s.len() {
+            return String::from("");
+        }
+
+        let t_map = Solution::get_char_map(&t);
+        let s_map = Solution::get_char_map(&s);
+
+        if !Solution::is_char_map_contains(&s_map, &t_map) {
+            return String::from("");
+        }
+
+        let mut candidate: VecDeque<char> = VecDeque::new();
+        let mut c_map: HashMap<char, u32> = HashMap::new();
+
+        let mut res = String::from("");
+
+        for c in s.chars() {
+            candidate.push_back(c);
+            *c_map.entry(c).or_insert(0) += 1;
+
+            while !candidate.is_empty() {
+                let front = candidate.front().unwrap();
+
+                if c_map.get(front).unwrap() > t_map.get(front).unwrap_or(&0) {
+                    let pop_c = candidate.pop_front().unwrap();
+                    c_map.entry(pop_c).and_modify(|v| {
+                        *v -= 1;
+                    });
+                } else {
+                    break;
+                }
+            }
+
+            if Solution::is_char_map_contains(&c_map, &t_map) {
+                let substring: String = candidate.iter().collect();
+                if res.len() == 0 || substring.len() < res.len() {
+                    res = substring
+                }
+
+                let pop_c = candidate.pop_front().unwrap();
+                c_map.entry(pop_c).and_modify(|v| {
+                    *v -= 1;
+                });
+            }
+        }
+
+        res
+    }
+}
 
 impl Solution {
     pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
