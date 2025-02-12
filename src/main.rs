@@ -1,14 +1,51 @@
 use std::{
     cmp::{max, min},
-    collections::HashMap,
+    collections::{HashMap, VecDeque},
     vec,
 };
 
 fn main() {
-    let res = Solution::subarray_sum(vec![-1, -1, 1], 0);
+    let res = Solution::max_sliding_window(vec![1, -1], 1);
     print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
+        //handle invalid inputs
+        if nums.len() == 0 || k == 0 {
+            return vec![];
+        }
+
+        let mut mono_desc_deque = VecDeque::<usize>::new();
+        let mut res: Vec<i32> = vec![];
+
+        for (index, num) in nums.iter().enumerate() {
+            //Remove the elements less than it from deque
+            while mono_desc_deque.len() > 0
+                && *num > nums[*mono_desc_deque.back().unwrap() as usize]
+            {
+                mono_desc_deque.pop_back();
+            }
+
+            //Remove the heading element if out of the window range
+            if mono_desc_deque.len() > 0
+                && (*mono_desc_deque.front().unwrap() as i32) <= index as i32 - k
+            {
+                mono_desc_deque.pop_front();
+            }
+
+            //Push the number at the end of the deque
+            mono_desc_deque.push_back(index);
+
+            if (index as i32) >= k - 1 {
+                res.push(nums[*mono_desc_deque.front().unwrap()]);
+            }
+        }
+
+        res
+    }
+}
 
 impl Solution {
     pub fn subarray_sum(nums: Vec<i32>, k: i32) -> i32 {
