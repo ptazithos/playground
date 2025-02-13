@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::{
     cmp::{max, min},
     collections::{HashMap, VecDeque},
@@ -5,10 +6,34 @@ use std::{
 };
 
 fn main() {
-    let res = Solution::min_window(String::from("acbbaca"), String::from("aba"));
+    let res = Solution::max_sub_array(vec![-3, -2, -4]);
     print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn max_sub_array(nums: Vec<i32>) -> i32 {
+        let mut res = nums[0];
+        let mut sum = 0;
+        let mut sub_vec: Vec<i32> = vec![];
+        for num in nums.iter() {
+            if sum < 0 {
+                sum = 0;
+                sub_vec.clear();
+            }
+
+            sum += *num;
+            sub_vec.push(*num);
+
+            if sum > res {
+                res = sum;
+            }
+        }
+
+        res
+    }
+}
+
 impl Solution {
     fn get_char_map(s: &String) -> HashMap<char, u32> {
         let mut char_map: HashMap<char, u32> = HashMap::new();
@@ -344,12 +369,12 @@ impl Solution {
 
 impl Solution {
     pub fn move_zeroes(nums: &mut Vec<i32>) {
-        let orignal_len = nums.len();
+        let original_len = nums.len();
 
         nums.retain(|&num| num != 0);
         let new_len = nums.len();
 
-        let zeros = vec![0; orignal_len - new_len];
+        let zeros = vec![0; original_len - new_len];
 
         nums.extend(zeros.iter());
     }
