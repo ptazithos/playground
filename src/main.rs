@@ -6,10 +6,50 @@ use std::{
 };
 
 fn main() {
-    let res = Solution::max_sub_array(vec![-3, -2, -4]);
+    let res = Solution::merge(vec![
+        vec![2, 3],
+        vec![5, 5],
+        vec![2, 2],
+        vec![3, 4],
+        vec![3, 4],
+    ]);
     print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn has_overlap(lv: &Vec<i32>, rv: &Vec<i32>) -> bool {
+        if (rv[0] <= lv[1] && rv[1] >= lv[0]) {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        if intervals.len() == 0 {
+            return vec![];
+        }
+        let mut intervals = intervals;
+        intervals.sort();
+        println!("{:?}", intervals);
+        let mut res: VecDeque<Vec<i32>> = VecDeque::new();
+        let mut merged: Vec<i32> = vec![];
+        for interval in intervals {
+            if !res.is_empty() && Solution::has_overlap(res.back().unwrap(), &interval) {
+                while !res.is_empty() && Solution::has_overlap(res.back().unwrap(), &interval) {
+                    let last = res.pop_back().unwrap();
+                    merged = vec![min(last[0], interval[0]), max(last[1], interval[1])];
+                }
+                res.push_back(merged.clone());
+            } else {
+                res.push_back(interval);
+            }
+        }
+
+        res.into_iter().collect()
+    }
+}
 
 impl Solution {
     pub fn max_sub_array(nums: Vec<i32>) -> i32 {
