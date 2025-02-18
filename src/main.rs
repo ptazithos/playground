@@ -2,147 +2,28 @@
 use std::{
     cmp::{max, min},
     collections::{HashMap, VecDeque},
+    mem::swap,
     vec,
 };
 
 fn main() {
-    let res = Solution::merge(vec![
-        vec![2, 3],
-        vec![5, 5],
-        vec![2, 2],
-        vec![3, 4],
-        vec![3, 4],
-    ]);
-    print!("{:?}", res)
+    let mut arr = vec![1, 2, 3, 4, 5];
+    Solution::rotate(&mut arr, 1);
+    print!("{:?}", arr)
 }
 struct Solution {}
 
 impl Solution {
-    pub fn has_overlap(lv: &Vec<i32>, rv: &Vec<i32>) -> bool {
-        if (rv[0] <= lv[1] && rv[1] >= lv[0]) {
-            true
-        } else {
-            false
-        }
-    }
+    pub fn rotate(nums: &mut Vec<i32>, k: i32) {
+        let mut nums_deque: VecDeque<i32> = nums.drain(..).collect();
 
-    pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-        if intervals.len() == 0 {
-            return vec![];
-        }
-        let mut intervals = intervals;
-        intervals.sort();
-        println!("{:?}", intervals);
-        let mut res: VecDeque<Vec<i32>> = VecDeque::new();
-        let mut merged: Vec<i32> = vec![];
-        for interval in intervals {
-            if !res.is_empty() && Solution::has_overlap(res.back().unwrap(), &interval) {
-                while !res.is_empty() && Solution::has_overlap(res.back().unwrap(), &interval) {
-                    let last = res.pop_back().unwrap();
-                    merged = vec![min(last[0], interval[0]), max(last[1], interval[1])];
-                }
-                res.push_back(merged.clone());
-            } else {
-                res.push_back(interval);
-            }
+        for _ in 0..k {
+            let back = nums_deque.pop_back().unwrap();
+            nums_deque.push_front(back);
         }
 
-        res.into_iter().collect()
-    }
-}
-
-impl Solution {
-    pub fn max_sub_array(nums: Vec<i32>) -> i32 {
-        let mut res = nums[0];
-        let mut sum = 0;
-        let mut sub_vec: Vec<i32> = vec![];
-        for num in nums.iter() {
-            if sum < 0 {
-                sum = 0;
-                sub_vec.clear();
-            }
-
-            sum += *num;
-            sub_vec.push(*num);
-
-            if sum > res {
-                res = sum;
-            }
-        }
-
-        res
-    }
-}
-
-impl Solution {
-    fn get_char_map(s: &String) -> HashMap<char, u32> {
-        let mut char_map: HashMap<char, u32> = HashMap::new();
-
-        for c in s.chars() {
-            *char_map.entry(c).or_insert(0) += 1;
-        }
-
-        char_map
-    }
-
-    fn is_char_map_contains(lm: &HashMap<char, u32>, rm: &HashMap<char, u32>) -> bool {
-        for (c, count) in rm {
-            if lm.get(&c).unwrap_or(&0) < &count {
-                return false;
-            }
-        }
-
-        true
-    }
-
-    pub fn min_window(s: String, t: String) -> String {
-        if s.len() == 0 || t.len() == 0 || t.len() > s.len() {
-            return String::from("");
-        }
-
-        let t_map = Solution::get_char_map(&t);
-        let s_map = Solution::get_char_map(&s);
-
-        if !Solution::is_char_map_contains(&s_map, &t_map) {
-            return String::from("");
-        }
-
-        let mut candidate: VecDeque<char> = VecDeque::new();
-        let mut c_map: HashMap<char, u32> = HashMap::new();
-
-        let mut res = String::from("");
-
-        for c in s.chars() {
-            candidate.push_back(c);
-            *c_map.entry(c).or_insert(0) += 1;
-
-            while !candidate.is_empty() {
-                let front = candidate.front().unwrap();
-
-                if c_map.get(front).unwrap() > t_map.get(front).unwrap_or(&0) {
-                    let pop_c = candidate.pop_front().unwrap();
-                    c_map.entry(pop_c).and_modify(|v| {
-                        *v -= 1;
-                    });
-                } else {
-                    break;
-                }
-            }
-
-            if Solution::is_char_map_contains(&c_map, &t_map) {
-                let substring: String = candidate.iter().collect();
-                if res.len() == 0 || substring.len() < res.len() {
-                    res = substring
-                }
-
-                let pop_c = candidate.pop_front().unwrap();
-                c_map.entry(pop_c).and_modify(|v| {
-                    *v -= 1;
-                });
-            }
-        }
-
-        res
+        let mut nums_vec: Vec<i32> = nums_deque.into_iter().collect();
+        swap(nums, &mut nums_vec);
     }
 }
 
