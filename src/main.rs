@@ -7,11 +7,38 @@ use std::{
 };
 
 fn main() {
-    let mut arr = vec![1, 2, 3, 4, 5];
-    Solution::rotate(&mut arr, 1);
-    print!("{:?}", arr)
+    let res = Solution::product_except_self(vec![-1, 1, 0, -3, 3]);
+    print!("{:?}", res)
 }
 struct Solution {}
+
+impl Solution {
+    pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
+        // ans[i] = prev[i] * suf[i]
+        // nums: [1,2,3,4]
+        // pre: [1,1,2,6]
+        // suf:  [24,12,4,1]
+        let mut pre: Vec<i32> = vec![1];
+        for num in (&nums[0..nums.len() - 1]).iter() {
+            pre.push(pre.last().unwrap() * num);
+        }
+
+        let mut suf: Vec<i32> = vec![1];
+        for num in nums.iter().rev().take(nums.len() - 1) {
+            suf.push(suf.last().unwrap() * num);
+        }
+
+        suf.reverse();
+
+        let mut res = vec![];
+
+        for i in 0..nums.len() {
+            res.push(pre[i] * suf[i]);
+        }
+
+        res
+    }
+}
 
 impl Solution {
     pub fn rotate(nums: &mut Vec<i32>, k: i32) {
