@@ -7,36 +7,32 @@ use std::{
 };
 
 fn main() {
-    let res = Solution::product_except_self(vec![-1, 1, 0, -3, 3]);
-    print!("{:?}", res)
+    let res = Solution::first_missing_positive(vec![3, 4, -1, 1]);
+    print!("{:?}", res);
 }
 struct Solution {}
 
 impl Solution {
-    pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
-        // ans[i] = prev[i] * suf[i]
-        // nums: [1,2,3,4]
-        // pre: [1,1,2,6]
-        // suf:  [24,12,4,1]
-        let mut pre: Vec<i32> = vec![1];
-        for num in (&nums[0..nums.len() - 1]).iter() {
-            pre.push(pre.last().unwrap() * num);
-        }
-
-        let mut suf: Vec<i32> = vec![1];
-        for num in nums.iter().rev().take(nums.len() - 1) {
-            suf.push(suf.last().unwrap() * num);
-        }
-
-        suf.reverse();
-
-        let mut res = vec![];
-
+    pub fn first_missing_positive(nums: Vec<i32>) -> i32 {
+        let mut nums = nums;
+        nums.sort();
         for i in 0..nums.len() {
-            res.push(pre[i] * suf[i]);
+            let num = nums[i];
+            if num > 0 && num < nums.len() as i32 + 1 {
+                if num != i as i32 + 1 {
+                    nums.swap(i, num as usize - 1);
+                }
+            }
         }
 
-        res
+        println!("{:?}", nums);
+        for i in 0..nums.len() {
+            if nums[i] as usize != i + 1 {
+                return (i + 1) as i32;
+            }
+        }
+
+        (nums.len() + 1) as i32
     }
 }
 
