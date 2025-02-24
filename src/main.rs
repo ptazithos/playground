@@ -1,16 +1,66 @@
 #![allow(unused)]
 use std::{
+    cell::RefCell,
     cmp::{max, min},
     collections::{HashMap, VecDeque},
     mem::swap,
+    rc::Rc,
     vec,
 };
 
 fn main() {
-    let res = Solution::first_missing_positive(vec![3, 4, -1, 1]);
+    let res = Solution::letter_combinations(String::from("23"));
     print!("{:?}", res);
 }
 struct Solution {}
+type Res = Rc<RefCell<Vec<String>>>;
+type Map = HashMap<String, Vec<String>>;
+
+impl Solution {
+    pub fn recursive_concat(res: Res, map: &Map, digits: &String, depth: usize, comb: String) {
+        if depth == digits.len() {
+            if comb.len() > 0 {
+                res.borrow_mut().push(comb.clone());
+            }
+            return;
+        }
+
+        let digit = digits.chars().nth(depth).unwrap().to_string();
+        let chars = map.get(&digit).unwrap();
+
+        chars.iter().for_each(|char| {
+            let mut comb_cloned = comb.clone();
+            comb_cloned.push_str(char);
+
+            let res_cloned = res.clone();
+            Self::recursive_concat(res_cloned, map, digits, depth + 1, comb_cloned);
+        });
+    }
+
+    pub fn letter_combinations(digits: String) -> Vec<String> {
+        let mut map: Map = HashMap::new();
+        map.insert("2".into(), vec!["a".into(), "b".into(), "c".into()]);
+        map.insert("3".into(), vec!["d".into(), "e".into(), "f".into()]);
+        map.insert("4".into(), vec!["g".into(), "h".into(), "i".into()]);
+        map.insert("5".into(), vec!["j".into(), "k".into(), "l".into()]);
+        map.insert("6".into(), vec!["m".into(), "n".into(), "o".into()]);
+        map.insert(
+            "7".into(),
+            vec!["p".into(), "q".into(), "r".into(), "s".into()],
+        );
+        map.insert("8".into(), vec!["t".into(), "u".into(), "v".into()]);
+        map.insert(
+            "9".into(),
+            vec!["w".into(), "x".into(), "y".into(), "z".into()],
+        );
+
+        let res: Res = Rc::new(RefCell::new(vec![]));
+
+        Self::recursive_concat(res.clone(), &map, &digits, 0, String::from(""));
+
+        res.take()
+    }
+}
 
 impl Solution {
     pub fn first_missing_positive(nums: Vec<i32>) -> i32 {
