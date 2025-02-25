@@ -9,9 +9,37 @@ use std::{
 };
 
 fn main() {
-    let res = Solution::letter_combinations(String::from("23"));
+    let mut res = vec![vec![0, 1, 2, 0], vec![3, 4, 5, 2], vec![1, 3, 1, 5]];
+    Solution::set_zeroes(&mut res);
     print!("{:?}", res);
 }
+
+impl Solution {
+    pub fn set_zeroes(matrix: &mut Vec<Vec<i32>>) {
+        let mut marker_hashmap: HashMap<usize, bool> = HashMap::new();
+        for i in 0..matrix.len() {
+            for j in 0..matrix[i].len() {
+                if matrix[i][j] == 0 {
+                    marker_hashmap.entry(i).or_insert(true);
+                    marker_hashmap.entry(1000 + j).or_insert(true);
+                }
+            }
+        }
+
+        for i in 0..matrix.len() {
+            for j in 0..matrix[i].len() {
+                if let Some(marker) = marker_hashmap.get(&i) {
+                    matrix[i][j] = 0;
+                }
+
+                if let Some(marker) = marker_hashmap.get(&(1000 + j)) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+
 struct Solution {}
 type Res = Rc<RefCell<Vec<String>>>;
 type Map = HashMap<String, Vec<String>>;
