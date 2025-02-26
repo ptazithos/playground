@@ -9,9 +9,78 @@ use std::{
 };
 
 fn main() {
-    let mut res = vec![vec![0, 1, 2, 0], vec![3, 4, 5, 2], vec![1, 3, 1, 5]];
-    Solution::set_zeroes(&mut res);
+    let mut res = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
+    Solution::rotate_image(&mut res);
     print!("{:?}", res);
+}
+
+impl Solution {
+    pub fn rotate_image(matrix: &mut Vec<Vec<i32>>) {
+        let n = matrix.len();
+        for i in 0..n {
+            for j in 0..i {
+                let rv = matrix[i][j];
+                let lv = matrix[j][i];
+
+                matrix[j][i] = rv;
+                matrix[i][j] = lv;
+                println!("i:{:?}, j:{:?},{:?}", i, j, matrix);
+            }
+        }
+
+        for i in 0..n {
+            matrix[i].reverse();
+        }
+    }
+}
+
+impl Solution {
+    pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let mut matrix = matrix;
+
+        let height = matrix.len();
+        let width = matrix[0].len();
+
+        let count = (std::cmp::min(width, height) + 1) / 2;
+
+        let mut res: Vec<i32> = vec![];
+        for i in 0..count {
+            let top_row: Vec<i32> = matrix.remove(0);
+            println!("top row: {:?}", top_row);
+            if matrix.len() == 0 {
+                res.extend(top_row);
+                break;
+            }
+            let mut bottom_row: Vec<i32> = matrix.remove(matrix.len() - 1);
+            println!("bottom row: {:?}", bottom_row);
+
+            let mut left_col: Vec<i32> = vec![];
+            let mut right_col: Vec<i32> = vec![];
+            for j in 0..matrix.len() {
+                let mut temp_row = &mut matrix[j];
+                let tail = temp_row.remove(temp_row.len() - 1);
+
+                right_col.push(tail);
+                if temp_row.len() == 0 {
+                    continue;
+                }
+                let head = temp_row.remove(0);
+
+                left_col.push(head);
+            }
+            println!("left col: {:?}", left_col);
+            println!("right col: {:?}", right_col);
+
+            res.extend(top_row);
+            res.extend(right_col);
+            bottom_row.reverse();
+            res.extend(bottom_row);
+            left_col.reverse();
+            res.extend(left_col);
+        }
+
+        res
+    }
 }
 
 impl Solution {
