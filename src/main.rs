@@ -9,9 +9,42 @@ use std::{
 };
 
 fn main() {
-    let mut res = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
-    Solution::rotate_image(&mut res);
+    let mut input = vec![
+        vec![1, 4, 7, 11, 15],
+        vec![2, 5, 8, 12, 19],
+        vec![3, 6, 9, 16, 22],
+        vec![10, 13, 14, 17, 24],
+        vec![18, 21, 23, 26, 30],
+    ];
+    let res = Solution::search_matrix(input, 20);
     print!("{:?}", res);
+}
+
+impl Solution {
+    pub fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
+        let width = matrix[0].len();
+        let height = matrix.len();
+
+        let mut up = 0;
+        let mut left = width;
+
+        while up < height {
+            let row_in_search = &matrix[up];
+            for index in 0..left {
+                let ele_in_search = row_in_search[index];
+                if ele_in_search > target {
+                    left = index;
+                    break;
+                } else if ele_in_search == target {
+                    return true;
+                }
+            }
+
+            up += 1;
+        }
+
+        return false;
+    }
 }
 
 impl Solution {
