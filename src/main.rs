@@ -14,6 +14,42 @@ fn main() {
     print!("{:?}", res);
 }
 
+// Definition for singly-linked list.
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
+impl Solution {
+    pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
+        let mut deque = VecDeque::new();
+        let mut p = head.clone();
+        while let Some(node) = p {
+            deque.push_back(node.val);
+
+            p = node.next;
+        }
+
+        let mut p = head.clone();
+        while let Some(node) = p {
+            let back = deque.pop_back().unwrap();
+            if back != node.val {
+                return false;
+            }
+            p = node.next;
+        }
+
+        return true;
+    }
+}
+
 impl Solution {
     pub fn rotate_image(matrix: &mut Vec<Vec<i32>>) {
         let n = matrix.len();
