@@ -33,6 +33,60 @@ impl ListNode {
         ListNode { next: None, val }
     }
 }
+
+impl Solution {
+    pub fn reverse_k(
+        head: Option<Box<ListNode>>,
+        k: i32,
+    ) -> (Option<Box<ListNode>>, Option<Box<ListNode>>) {
+        let mut p = head.as_ref();
+        //Check if input list has at least k elements
+        for _ in 0..k {
+            if (p.is_none()) {
+                // return original head if input list doesn't have k elemeents
+                return (head, None);
+            }
+            p = p.unwrap().next.as_ref();
+        }
+
+        //construct a tail node to keep the head of the list
+        let mut tail = None;
+        let mut remain = head;
+        // Reverse k elements in the list and return remain part of the list
+        for _ in 0..k {
+            let mut node = remain.take().unwrap();
+            remain = node.next.take();
+            node.next = tail;
+            tail = Some(node);
+        }
+
+        (tail, remain)
+    }
+
+    pub fn reverse_k_group(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+        let mut virtual_head = ListNode::new(0);
+        let mut tail = &mut virtual_head;
+        let mut remain = head;
+        loop {
+            let (new_head, new_remain) = Self::reverse_k(remain, k);
+            remain = new_remain;
+
+            //Concat the reversed k to previous
+            tail.next = new_head;
+
+            if (remain.is_none()) {
+                break;
+            }
+
+            while tail.next.as_ref().is_some() {
+                tail = tail.next.as_mut().unwrap();
+            }
+        }
+
+        virtual_head.next
+    }
+}
+
 impl Solution {
     pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
         let mut deque = VecDeque::new();
